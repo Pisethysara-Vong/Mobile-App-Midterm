@@ -25,7 +25,6 @@ class CloudWidget extends StatefulWidget {
 class _CloudWidgetState extends State<CloudWidget> with TickerProviderStateMixin {
   late AnimationController _controllerSlideRight;
   late Animation<double> _animationSlideRight;
-  bool _isBurst = false;
 
   @override
   void initState() {
@@ -34,14 +33,6 @@ class _CloudWidgetState extends State<CloudWidget> with TickerProviderStateMixin
       duration: widget.animationDuration, // Use passed animation duration
       vsync: this,
     );
-
-    _controllerSlideRight.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        setState(() {
-          _isBurst = true;
-        });
-      }
-    });
 
   }
 
@@ -64,7 +55,7 @@ class _CloudWidgetState extends State<CloudWidget> with TickerProviderStateMixin
 
     _controllerSlideRight.forward();
 
-    return _isBurst ? const SizedBox.shrink() : AnimatedBuilder(
+    return AnimatedBuilder(
       animation: _animationSlideRight,
       builder: (context, child) {
         return Container(
@@ -77,9 +68,18 @@ class _CloudWidgetState extends State<CloudWidget> with TickerProviderStateMixin
           child: child,
         );
       },
+    child: GestureDetector(
+      onTap: () {
+      if (_controllerSlideRight.isAnimating) {
+        _controllerSlideRight.stop();
+      } else {
+        _controllerSlideRight.repeat();
+        }
+      },
       child: Image.asset(
         widget.cloudImagePath,
         fit: BoxFit.contain,
+        ),
       ),
     );
   }
